@@ -1,7 +1,7 @@
 const interval = require('rxjs').interval;
 const flatMap = require('rxjs/operators').flatMap;
 const map = require('rxjs/operators').map;
-const mergeAll = require('rxjs/operators').mergeAll
+const mergeAll = require('rxjs/operators').mergeAll;
 const from = require('rxjs').from;
 const xmljsConverter = require('xml-js');
 
@@ -45,16 +45,16 @@ class CapAtomFeedListenerService {
 
     /**
      * Creates an observable which emits cap xml items 
-     * from an atom feed by checking the url regulary
+     * from an atom feed by checking the feed endpoint regulary
      * @param {string} url - URL to an cap-compatible atom feed
      * @returns {Observable<string>} observableFeed
      */
     feed(url) {
         return interval(this.configuration.PULL_INTERVAL)
         .pipe(
-            flatMap(() => from(this.request.get(url)))
-        )
-        .pipe(
+            flatMap(
+                () => from(this.request.get(url))
+            ),
             map(
                 (feedXml) => {
                     const xmlAsObj = xmljsConverter.xml2js(feedXml, {
@@ -68,7 +68,15 @@ class CapAtomFeedListenerService {
                     }
 
                     return feed.entry.map(
-                        (entry) => entry.link[0]._attributes.href
+                        (entry) => {
+                            // Filter links to ensure right type, but tolerate links without type
+                            entry.link = entry.link.filter(
+                                (link) => !link._attributes.type || link._attributes.type === 'application/cap+xml'
+                            );
+                            console.log('link is:', entry.link[0]._attributes.href);
+                            
+                            return entry.link[0]._attributes.href;
+                        }
                     );
                 }
             ),
@@ -77,7 +85,10 @@ class CapAtomFeedListenerService {
                     (capUrl) => from(this.request.get(capUrl))
                 )
             ),
-            mergeAll()
+            mergeAll(),
+            flatMap(
+                (item) => item
+            )
         );
     }
 

@@ -1,45 +1,37 @@
 const CapAtomFeedListenerService = require('./cap-atom-feed-listener.service');
 const fs = require('fs');
 
-class RequestMock {
-    constructor() {
-        this.result = '';
-    }
-
-    getShouldDeliverPromiseWith(result) {
-        this.result = result;
-    }
-
-    get(url) {
-        return new Promise((resolve) => {
-            if (url === 'http://example.org/alert') {
-                resolve(fs.readFileSync('src/resources/test/alert.cap.xml', {encoding: 'utf-8'}));
-            }
-
-            resolve(this.result);
-        });
-    }
-}
-
 describe('CapAtomFeedListenerService', () => {
-    let service;
-    let request;
+    let config = {};
+
+    function createRequestMock() {
+        return {
+            get: (url) => {
+                console.error('requestMock', 'this should not have been called, please use a spy instead');
+                
+                return new Promise((resolve) => resolve('some xml'))
+            }
+        };
+    }
+
 
     beforeEach(() => {
-        const config = {
+        config = {
             PULL_INTERVAL: 3000
         };
-        request = new RequestMock();
-        service = new CapAtomFeedListenerService(request, config);
     });
 
     it('should be created', () => {
+        const service = new CapAtomFeedListenerService(createRequestMock(), config);
         expect(service).toBeDefined();
     });
 
-    it('should only one item at a time', (done) => {
+    it('should emit no array', (done) => {
+        const request = createRequestMock();
         const xml = fs.readFileSync('src/resources/test/cap-feed.atom.xml', {encoding: 'utf-8'});
-        request.getShouldDeliverPromiseWith(xml);
+        spyOn(request, 'get').and.callFake(() => new Promise((resolve) => resolve(xml)));
+        const service = new CapAtomFeedListenerService(request, config);
+        
         const feed = service.feed('https://some-url');
         feed.subscribe(
             (item) => {
@@ -49,5 +41,20 @@ describe('CapAtomFeedListenerService', () => {
         );
     });
 
+    // NOTE: this does not work at the moment because spy does not return expected value
+    xit('should request the right link url', (done) => {
+        const request = createRequestMock();
+        const xml = fs.readFileSync('src/resources/test/cap-feed.atom.xml', {encoding: 'utf-8'});
+        const spy = spyOn(request, 'get').and.callFake(() => new Promise((resolve) => resolve(xml)));
+        const service = new CapAtomFeedListenerService(request, config);
+        
+        const feed = service.feed('https://some-url');
+        feed.subscribe(
+            (item) => {
+                expect(spy).toHaveBeenCalled();
+                done();
+            }
+        );
+    });
 
 });
