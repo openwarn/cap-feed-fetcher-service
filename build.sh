@@ -1,3 +1,3 @@
 #!/bin/bash
 
-npm test && npm run lint --fix && docker build -t node-dummy-service .
+npm test && npm run lint --fix && docker build -t cap-feed-fetcher-service .
