@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <updated>2019-03-16T06:44:11Z</updated>
+  <title>Earthquake</title>
+  <subtitle>Last 2 events</subtitle>
+  <link rel="hub" href="//alert-hub.example.org"/>
+  <link href="http://inatews.bmkg.go.id/"/>
+  <author>
+    <name>Some Warning System</name>
+  </author>
+  <id>http://example.org</id>
+  <entry>
+    <id>urn:example.org:20180216134345</id>
+    <title>Kekuatan: 5.4 SR, 47 km BaratLaut JAYAPURA-PAPUA</title>
+    <updated>2018-02-16T13:43:45+07:00</updated>
+    <link rel="alternate" type="text/html" href="http://example.org/some/non/feed/link/1"/>
+    <summary type="html"><![CDATA[Waktu gempa: 16-Feb-19 13:39:49 WIB</p><p>Lintang: -2.34</p><p>Bujur: 140.32</p><p>Kedalaman: 10 km </p>]]></summary>
+    <link rel="related" type="application/cap+xml" href="http://example.org/alert" />
+  </entry>
+  <entry>
+    <id>urn:example.org:20190216134345</id>
+    <title>Entry2</title>
+    <updated>2019-02-14T06:45:31+07:00</updated>
+    <link rel="alternate" type="text/html" href="http://example.org/some/non/feed/link/1"/>
+    <summary type="html"><![CDATA[Waktu gempa: 14-Feb-19 06:41:52 WIB</p><p>Lintang: -7.07</p><p>Bujur: 105.75</p><p>Kedalaman: 21 km </p>]]></summary>
+    <link rel="related" type="application/cap+xml" href="http://example.org/alert" />
+  </entry>
+</feed>

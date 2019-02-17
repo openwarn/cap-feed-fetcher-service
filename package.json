@@ -1,0 +1,38 @@
+{
+  "name": "cap-feed-fetcher-service",
+  "version": "1.0.0",
+  "description": "Fetch items from a cap feed and push it to an other service",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "jasmine",
+    "start": "node .",
+    "lint": "eslint src/**/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/warnsystem/cap-feed-fetcher-service.git"
+  },
+  "keywords": [
+    "Nodejs",
+		"CAP"
+  ],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/warnsystem/cap-feed-fetcher-service#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "helmet": "^3.15.0",
+    "morgan": "^1.9.1",
+    "redis": "^2.8.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "rxjs": "^6.4.0",
+    "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "jasmine": "^3.3.1",
+    "supertest": "^3.4.2"
+  }
+}

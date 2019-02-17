@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alert xmlns = "urn:oasis:names:tc:emergency:cap:1.2">
+    <identifier>Example-23342234</identifier>
+    <sender>alerts@example.org</sender>
+    <sent>2019-02-14T03:02:54+07:00</sent>
+    <status>Actual</status>
+    <msgType>Alert</msgType>
+    <scope>Public</scope>
+    <info>
+        <language>en-US</language>
+        <category>Geo</category>
+        <event>Earthquake</event>
+        <urgency>Past</urgency>
+        <severity>Unknown</severity>
+        <certainty>Observed</certainty>
+        <expires>2019-02-21T13:02:54+07:00</expires>
+        <senderName>Example</senderName>
+        <headline>Earthquake</headline>
+        <description>An earthquake has occurred with magnitude: 5.0</description>
+        <web>http://example.org/alerts/232332</web>
+        <area>
+            <areaDesc>in the middle of nowhere</areaDesc>
+            <circle>-9.34,112.53 0</circle>
+        </area>
+    </info>
+</alert>
