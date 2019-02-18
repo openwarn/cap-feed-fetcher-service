@@ -30,7 +30,7 @@ rules:
   capitalized-comments:
     - error
     - always
-  class-methods-use-this: error
+  class-methods-use-this: warn
   comma-dangle: error
   comma-spacing:
     - error
@@ -85,7 +85,7 @@ rules:
   max-lines: 'off'
   max-lines-per-function: 'off'
   max-nested-callbacks: error
-  max-params: error
+  max-params: 'warn'
   max-statements: 'off'
   max-statements-per-line: error
   multiline-comment-style: error
