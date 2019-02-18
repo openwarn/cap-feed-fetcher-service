@@ -73,7 +73,6 @@ class CapAtomFeedListenerService {
                             entry.link = entry.link.filter(
                                 (link) => !link._attributes.type || link._attributes.type === 'application/cap+xml'
                             );
-                            console.log('link is:', entry.link[0]._attributes.href);
                             
                             return entry.link[0]._attributes.href;
                         }
