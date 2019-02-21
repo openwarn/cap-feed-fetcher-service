@@ -32,6 +32,7 @@ function startApp() {
   const capFeedListenerService = new CapAtomFeedListenerService(request, config);
   const redisClient = new ioredis({
     host: config.REDIS_HOST,
+    port: config.REDIS_PORT,
     lazyConnect: true
   });
   const capStorageService = new CapStorageService(redisClient);

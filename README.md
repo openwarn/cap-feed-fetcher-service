@@ -42,6 +42,7 @@ This service is configurable via environment variables (docker).
 * FEED_URL: CAP feed URL (Atom)
 * PULL_INTERVAL: Time between HTTP calls to FEED_URL
 * REDIS_HOST: IP Address / Host of a redis (database) instance
+* REDIS_PORT
 * WARNING_DISTRIBUTION_URL: Endpoint to where new alerts are being posted (HTTP)
 
 ## Contributing
