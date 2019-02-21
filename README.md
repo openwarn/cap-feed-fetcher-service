@@ -31,7 +31,7 @@ docker build -t cap-feed-fetcher-service .
 ## Run
 
 ```bash
-docker run -p 9301:9301 --env FEED_URL=`http://example.org/alerts/feed/atom`
+docker run -p 9305:9301 --env FEED_URL="http://example.org/alerts/feed/atom" cap-feed-fetcher-service
 ```
 
 
