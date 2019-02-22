@@ -22,7 +22,7 @@ describe('CapAtomFeedListenerService', () => {
     });
 
     it('should be created', () => {
-        const service = new CapAtomFeedListenerService(createRequestMock(), config);
+        const service = new CapAtomFeedListenerService(createRequestMock());
         expect(service).toBeDefined();
     });
 
@@ -32,7 +32,7 @@ describe('CapAtomFeedListenerService', () => {
         spyOn(request, 'get').and.callFake(() => new Promise((resolve) => resolve(xml)));
         const service = new CapAtomFeedListenerService(request, config);
         
-        const feed = service.feed('https://some-url');
+        const feed = service.feed('https://some-url', config.PULL_INTERVAL);
         feed.subscribe(
             (item) => {
                 expect(Array.isArray(item)).toBe(false);
@@ -46,9 +46,9 @@ describe('CapAtomFeedListenerService', () => {
         const request = createRequestMock();
         const xml = fs.readFileSync('src/resources/test/cap-feed.atom.xml', {encoding: 'utf-8'});
         const spy = spyOn(request, 'get').and.callFake(() => new Promise((resolve) => resolve(xml)));
-        const service = new CapAtomFeedListenerService(request, config);
+        const service = new CapAtomFeedListenerService(request);
         
-        const feed = service.feed('https://some-url');
+        const feed = service.feed('https://some-url', config.PULL_INTERVAL);
         feed.subscribe(
             (item) => {
                 expect(spy).toHaveBeenCalled();

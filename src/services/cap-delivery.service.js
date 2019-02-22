@@ -2,11 +2,15 @@ const from = require('rxjs').from;
 const map = require('rxjs/operators').map;
 
 class CapDeliveryService {
-    constructor(request, configuration) {
+    constructor(request, targetUrl) {
         this.request = request;
-        this.configuration = configuration;
+        this.targetUrl = targetUrl;
     }
 
+    /**
+     * @param {string} alertId 
+     * @param {string} capXml 
+     */
     deliver(alertId, capXml) {
         return from(this.request({
             headers: {},
@@ -14,7 +18,7 @@ class CapDeliveryService {
                 xml: capXml
             },
             method: 'POST',
-            url: this.configuration.WARNING_DISTRIBUTION_URL
+            url: this.targetUrl
         })).pipe(
             map(
                 () => alertId

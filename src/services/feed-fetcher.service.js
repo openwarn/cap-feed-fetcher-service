@@ -4,41 +4,37 @@ const map = require('rxjs/operators').map;
 const forkJoin = require('rxjs').forkJoin;
 const from = require('rxjs').from;
 const filter = require('rxjs/operators').filter;
-const retry = require('rxjs/operators').retry;
-const catchError = require('rxjs/operators').catchError;
-const NoopRedisClient = require('./noop-redis.client');
+const CapStorageService = require('./cap-storage.service');
+const CapAtomFeedListenerService = require('./cap-atom-feed-listener.service');
+const CapDeliveryService = require('./cap-delivery.service');
 
 class FeedFetcherService {
-    constructor(config, redisClient, capFeedListenerService, capStorageService, capDeliveryService) {
-        this.config = config;
-        this.redisClient = redisClient;
-        this.capFeedListenerService = capFeedListenerService;
+    /**
+     * 
+     * @param {CapAtomFeedListenerService} capAtomFeedListenerService 
+     * @param {CapStorageService} capStorageService 
+     * @param {CapDeliveryService} capDeliveryService 
+     */
+    constructor(capAtomFeedListenerService, capStorageService, capDeliveryService) {
+        this.capAtomFeedListenerService = capAtomFeedListenerService;
         this.capStorageService = capStorageService;
         this.capDeliveryService = capDeliveryService;
     }
 
-    fetch() {
-        return from(this.redisClient.connect())
-        .pipe(
-            retry(3),
-            catchError(
-                () => { 
-                    // If no connection to redis is available use fake redis client instead
-                    console.warn('FeedFetcherService', 'Cannot establish connection to redis, continuing without storage');
-                    this.redisClient = new NoopRedisClient();
-                    
-                    return from([null]);
-                }
-            ),
-            flatMap(
-               () => this.capFeedListenerService.feed(this.config.FEED_URL) 
-            ),
+    /**
+     * Retrieve entries from a feed and transfer new ones to the target service
+     * @param {string} feedUrl 
+     * @param {number} pullInterval - Number of milliseconds between requests
+     * @returns {Observable<alertId>}
+     */
+    transferNewAlerts(feedUrl, pullInterval) {
+        return this.capAtomFeedListenerService.feed(feedUrl, pullInterval).pipe(
             flatMap(
               (alertXml) => {
                 const alert = CapAlert.fromXml(alertXml);
                 console.info('FeedFetcherService', `Got alert with id ${alert.getId()}`);
 
-                return forkJoin(from([alert.getId()]), from([alertXml]), this.capStorageService.exists(alert.getId()));
+                return forkJoin(from([alert.getId()]), from([alertXml]), this.capStorageService.idExists(alert.getId()));
               }
             ),
             map(
@@ -55,7 +51,11 @@ class FeedFetcherService {
               (params) => this.capDeliveryService.deliver(params.alertId, params.alertXml)
             ),
             flatMap(
-              (alertId) => from(this.capStorageService.add(alertId))
+              (alertId) => {
+                return this.capStorageService.addId(alertId).pipe(
+                  map(() => alertId)
+                );
+              }
             )
           );
     }

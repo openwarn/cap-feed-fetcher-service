@@ -5,12 +5,18 @@ class CapAlert {
         return new CapAlert(xml);
     }
 
+    /**
+     * @param {string} xml 
+     */
     constructor(xml) {
         this.alert = xmljsConverter.xml2js(xml, {
             compact: true
         }).alert;
     }
 
+    /**
+     * @returns {string}
+     */
     getId() {
         return this.alert.identifier._text;
     }

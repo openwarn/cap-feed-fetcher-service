@@ -38,19 +38,19 @@ class CapAtomFeedListenerService {
         return true;
     }
 
-    constructor(request, configuration) {
+    constructor(request) {
         this.request = request;
-        this.configuration = configuration;
     }
 
     /**
      * Creates an observable which emits cap xml items 
      * from an atom feed by checking the feed endpoint regulary
      * @param {string} url - URL to an cap-compatible atom feed
+     * @param {number} pullInterval - Number of milliseconds between requests
      * @returns {Observable<string>} observableFeed
      */
-    feed(url) {
-        return interval(this.configuration.PULL_INTERVAL)
+    feed(url, pullInterval) {
+        return interval(pullInterval)
         .pipe(
             flatMap(
                 () => from(this.request.get(url))
