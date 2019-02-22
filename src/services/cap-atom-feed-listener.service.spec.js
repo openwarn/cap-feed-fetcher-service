@@ -1,5 +1,6 @@
 const CapAtomFeedListenerService = require('./cap-atom-feed-listener.service');
 const fs = require('fs');
+const request = require('request');
 
 describe('CapAtomFeedListenerService', () => {
     let config = {};
@@ -26,7 +27,7 @@ describe('CapAtomFeedListenerService', () => {
         expect(service).toBeDefined();
     });
 
-    it('should emit no array', (done) => {
+    it('should not emit array', (done) => {
         const request = createRequestMock();
         const xml = fs.readFileSync('src/resources/test/cap-feed.atom.xml', {encoding: 'utf-8'});
         spyOn(request, 'get').and.callFake(() => new Promise((resolve) => resolve(xml)));
@@ -41,17 +42,15 @@ describe('CapAtomFeedListenerService', () => {
         );
     });
 
-    // NOTE: this does not work at the moment because spy does not return expected value
-    xit('should request the right link url', (done) => {
-        const request = createRequestMock();
+    it('should request the right link url from feed item', (done) => {
         const xml = fs.readFileSync('src/resources/test/cap-feed.atom.xml', {encoding: 'utf-8'});
-        const spy = spyOn(request, 'get').and.callFake(() => new Promise((resolve) => resolve(xml)));
+        spyOn(request, 'get').and.callFake((url) => { return new Promise((resolve) => resolve(xml))});
         const service = new CapAtomFeedListenerService(request);
         
-        const feed = service.feed('https://some-url', config.PULL_INTERVAL);
+        const feed = service.feed('https://some-url', 1);
         feed.subscribe(
             (item) => {
-                expect(spy).toHaveBeenCalled();
+                expect(request.get).toHaveBeenCalledWith('http://example.org/alert');
                 done();
             }
         );
