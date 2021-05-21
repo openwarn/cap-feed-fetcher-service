@@ -1,9 +1,6 @@
 const CapAlert = require('../cap-alert');
-const flatMap = require('rxjs/operators').flatMap;
-const map = require('rxjs/operators').map;
-const forkJoin = require('rxjs').forkJoin;
-const from = require('rxjs').from;
-const filter = require('rxjs/operators').filter;
+const { mergeMap, map, filter } = require('rxjs/operators');
+const { forkJoin, of } = require('rxjs');
 
 class FeedFetcherService {
     /**
@@ -26,28 +23,34 @@ class FeedFetcherService {
      */
     transferNewAlerts(feedUrl, pullInterval) {
         return this.capAtomFeedListenerService.feed(feedUrl, pullInterval).pipe(
-            flatMap(
+            mergeMap(
               (alertXml) => {
                 const alert = CapAlert.fromXml(alertXml);
                 console.info('FeedFetcherService', `Got alert with id ${alert.getId()}`);
 
-                return forkJoin(from([alert.getId()]), from([alertXml]), this.capStorageService.idExists(alert.getId()));
+                return forkJoin([
+                  of(alert.getId()),
+                  of(alertXml),
+                  this.capStorageService.idExists(alert.getId())
+                ]);
               }
             ),
             map(
-              (params) => ({
-                alertId: params[0],
-                alertXml: params[1],
-                isFoundInStorage: params[2]
+              ([alertId, alertXml, isFoundInStorage]) => ({
+                alertId,
+                alertXml,
+                isFoundInStorage
               })
             ),
             filter(
-              (params) => params.isFoundInStorage === false
+              (params) => {
+                return params.isFoundInStorage === false
+              }
             ),
-            flatMap(
+            mergeMap(
               (params) => this.capDeliveryService.deliver(params.alertId, params.alertXml)
             ),
-            flatMap(
+            mergeMap(
               (alertId) => {
                 return this.capStorageService.addId(alertId).pipe(
                   map(() => alertId)

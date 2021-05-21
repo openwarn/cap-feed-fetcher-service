@@ -4,12 +4,12 @@ const fs = require('fs');
 describe('CapAtomFeedListenerService', () => {
     let config = {};
 
-    function createRequestMock() {
+    function createAxiosMock() {
         return {
             get: (url) => {
                 console.error('requestMock', 'this should not have been called, please use a spy instead');
                 
-                return new Promise((resolve) => resolve('some xml'))
+                return new Promise((resolve) => resolve({ data: 'some xml' }))
             }
         };
     }
@@ -22,15 +22,17 @@ describe('CapAtomFeedListenerService', () => {
     });
 
     it('should be created', () => {
-        const service = new CapAtomFeedListenerService(createRequestMock());
+        const service = new CapAtomFeedListenerService(createAxiosMock());
         expect(service).toBeDefined();
     });
 
     it('should not emit array', (done) => {
-        const request = createRequestMock();
+        const axios = createAxiosMock();
         const xml = fs.readFileSync('src/resources/test/cap-feed.atom.xml', {encoding: 'utf-8'});
-        spyOn(request, 'get').and.callFake(() => new Promise((resolve) => resolve(xml)));
-        const service = new CapAtomFeedListenerService(request, config);
+        spyOn(axios, 'get').and.callFake(
+            () => new Promise((resolve) => resolve({ data: xml }))
+        );
+        const service = new CapAtomFeedListenerService(axios, config);
         
         const feed = service.feed('https://some-url', config.PULL_INTERVAL);
         feed.subscribe(

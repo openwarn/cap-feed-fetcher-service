@@ -2,17 +2,15 @@
 const express = require('express');
 const http = require('http');
 const ioredis = require('ioredis');
-const request = require('request-promise-native');
+const axios = require('axios').default;
 const requestLogger = require('morgan');
-const from = require('rxjs').from;
-const retry = require('rxjs/operators').retry;
-const flatMap = require('rxjs/operators').flatMap;
-const catchError = require('rxjs/operators').catchError;
+const { from } = require('rxjs');
+const { catchError, mergeMap, retry } = require('rxjs/operators');
 const NoopRedisClient = require('./services/noop-redis.client');
 
-const environment = require('process').env;
 // Security
 const helmet = require('helmet');
+const noCache = require('nocache');
 const cors = require('cors');
 
 // Services
@@ -32,9 +30,9 @@ function resolveConfig(defaultConfig, env) {
 }
 
 function startApp() {
-  const config = resolveConfig(defaults, environment);
-  const capDeliveryService = new CapDeliveryService(request, config.WARNING_DISTRIBUTION_URL);
-  const capFeedListenerService = new CapAtomFeedListenerService(request, config);
+  const config = resolveConfig(defaults, process.env);
+  const capDeliveryService = new CapDeliveryService(axios, config.WARNING_DISTRIBUTION_URL);
+  const capFeedListenerService = new CapAtomFeedListenerService(axios, config);
   const app = express();
   const server = http.Server(app);
 
@@ -57,7 +55,7 @@ function startApp() {
           return from([null]);
       }
     ),
-    flatMap(
+    mergeMap(
       () => {
         capStorageService = new CapStorageService(redisClient);
         feedFetcherService = new FeedFetcherService(capFeedListenerService, capStorageService, capDeliveryService);
@@ -73,17 +71,17 @@ function startApp() {
     }
   );
 
-  server.listen(config.PORT, () => {
-    console.log('listening on *:' + config.PORT);
-  });
-
   app.use(requestLogger('dev'));
   app.use(helmet());
-  app.use(helmet.noCache());
+  app.use(noCache());
   app.use(cors());
 
   // Routes
   app.use('/health', healthRouterFactory());
+
+  server.listen(config.PORT, () => {
+    console.log('listening on *:' + config.PORT);
+  });
 
   return app;
 }

@@ -1,8 +1,5 @@
-const interval = require('rxjs').interval;
-const flatMap = require('rxjs/operators').flatMap;
-const map = require('rxjs/operators').map;
-const mergeAll = require('rxjs/operators').mergeAll;
-const from = require('rxjs').from;
+const { from, interval } = require('rxjs');
+const { mergeMap, map, mergeAll } = require('rxjs/operators');
 const xmljsConverter = require('xml-js');
 
 class CapAtomFeedListenerService {    
@@ -38,8 +35,8 @@ class CapAtomFeedListenerService {
         return true;
     }
 
-    constructor(request) {
-        this.request = request;
+    constructor(axios) {
+        this.axios = axios;
     }
 
     /**
@@ -52,11 +49,11 @@ class CapAtomFeedListenerService {
     feed(url, pullInterval) {
         return interval(pullInterval)
         .pipe(
-            flatMap(
-                () => from(this.request.get(url))
+            mergeMap(
+                () => from(this.axios.get(url))
             ),
             map(
-                (feedXml) => {
+                ({ data: feedXml }) => {
                     const xmlAsObj = xmljsConverter.xml2js(feedXml, {
                         alwaysArray: true,
                         compact: true
@@ -81,11 +78,15 @@ class CapAtomFeedListenerService {
             ),
             map(
                 (capLinks) => capLinks.map(
-                    (capUrl) => from(this.request.get(capUrl))
+                    (capUrl) => from(
+                        this.axios.get(capUrl).then(
+                            response => response.data
+                        )
+                    )
                 )
             ),
             mergeAll(),
-            flatMap(
+            mergeMap(
                 (item) => item
             )
         );
