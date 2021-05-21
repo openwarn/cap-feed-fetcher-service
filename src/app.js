@@ -64,7 +64,7 @@ function startApp() {
       }
     )
   ).subscribe(
-    () => console.log('App', 'Meldung übertragen'),
+    () => console.log('App', 'Message transfered'),
     (error) => {
       console.error('App', error);
       throw new Error('Cannot recover from fatal error');
