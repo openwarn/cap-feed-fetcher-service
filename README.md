@@ -34,6 +34,13 @@ docker build -t cap-feed-fetcher-service .
 docker run -p 9305:9301 --env FEED_URL="http://example.org/alerts/feed/atom" cap-feed-fetcher-service
 ```
 
+A redis instance is required to store identifiers of processed messages.
+
+Start redis:
+
+```bash
+docker run -p 6379:6379 redis
+```
 
 ## Configuration
 
