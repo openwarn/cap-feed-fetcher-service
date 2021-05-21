@@ -4,9 +4,6 @@ const map = require('rxjs/operators').map;
 const forkJoin = require('rxjs').forkJoin;
 const from = require('rxjs').from;
 const filter = require('rxjs/operators').filter;
-const CapStorageService = require('./cap-storage.service');
-const CapAtomFeedListenerService = require('./cap-atom-feed-listener.service');
-const CapDeliveryService = require('./cap-delivery.service');
 
 class FeedFetcherService {
     /**

@@ -1,6 +1,5 @@
 const CapAtomFeedListenerService = require('./cap-atom-feed-listener.service');
 const fs = require('fs');
-const request = require('request');
 
 describe('CapAtomFeedListenerService', () => {
     let config = {};
