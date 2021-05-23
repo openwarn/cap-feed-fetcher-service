@@ -16,7 +16,7 @@ It was created as part of the master thesis called
 
 ## Installation
 
-Prerequisites: [Node.js](https://nodejs.org/en/) (>=10), npm version 3+.
+Prerequisites: [Node.js](https://nodejs.org/en/) (>=14), npm version 7+.
 
 ```bash
 npm install
@@ -42,6 +42,12 @@ Start redis:
 docker run -p 6379:6379 redis
 ```
 
+Run warning-distribution-service mock if you don't want to start the full system:
+
+```bash
+npm run servemocks:warning-distribution
+```
+
 ## Configuration
 
 This service is configurable via environment variables (docker).
@@ -60,4 +66,4 @@ If you are interessted in supporting this project or building a warning system b
 
 ## License
 
-  [MIT](LICENSE)
+[MIT](LICENSE)
