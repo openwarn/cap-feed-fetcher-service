@@ -63,13 +63,13 @@ function startApp() {
         return feedFetcherService.transferNewAlerts(config.FEED_URL, config.PULL_INTERVAL);
       }
     )
-  ).subscribe(
-    () => console.log('App', 'Message transfered'),
-    (error) => {
-      console.error('App', error);
-      throw new Error('Cannot recover from fatal error');
-    }
-  );
+  ).subscribe({
+      next: () => console.log('App', 'Message transfered'),
+      error: (error) => {
+        console.error('App', error);
+        throw new Error('Cannot recover from fatal error');
+      }
+  });
 
   app.use(requestLogger('dev'));
   app.use(helmet());
