@@ -7,7 +7,8 @@
     "test": "jasmine",
     "start": "node .",
     "servemocks:warning-distribution": "servemocks warning-distribution/mock-api -p 9101",
-    "lint": "eslint src/**/*.js"
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix"
   },
   "repository": {
     "type": "git",
