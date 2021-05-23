@@ -2,3 +2,5 @@ node_modules
 npm-debug.log
 build.sh
 README.md
+spec
+warning-distribution
