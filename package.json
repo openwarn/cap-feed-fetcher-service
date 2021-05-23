@@ -18,7 +18,7 @@
     "CAP"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://bitbucket.org/warnsystem/cap-feed-fetcher-service#readme",
   "dependencies": {
     "axios": "^0.21.1",
