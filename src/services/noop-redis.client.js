@@ -1,9 +1,9 @@
 class NoopRedisClient {
-    exists(id) {
+    exists(_id) {
         return new Promise((resolve) => resolve('0'));
     }
 
-    add(id, capXml) {
+    add(_id, _capXml) {
         return new Promise((resolve) => resolve());
     }
 }

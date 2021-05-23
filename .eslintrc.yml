@@ -9,4 +9,6 @@ parserOptions:
   sourceType: script
 rules:
   no-console: 'off'
-  no-unused-vars: warn
+  no-unused-vars: 
+  - "error"
+  - { "argsIgnorePattern": "^_" }

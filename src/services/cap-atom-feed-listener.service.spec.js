@@ -6,7 +6,7 @@ describe('CapAtomFeedListenerService', () => {
 
     function createAxiosMock() {
         return {
-            get: (url) => {
+            get: (_url) => {
                 console.error('requestMock', 'this should not have been called, please use a spy instead');
                 
                 return new Promise((resolve) => resolve({ data: 'some xml' }))

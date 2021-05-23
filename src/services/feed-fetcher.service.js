@@ -1,5 +1,5 @@
 const CapAlert = require('../cap-alert');
-const { mergeMap, map, filter } = require('rxjs/operators');
+const { mergeMap, map, filter, catchError } = require('rxjs/operators');
 const { forkJoin, of } = require('rxjs');
 
 class FeedFetcherService {
@@ -28,19 +28,12 @@ class FeedFetcherService {
                 const alert = CapAlert.fromXml(alertXml);
                 console.info('FeedFetcherService', `Got alert with id ${alert.getId()}`);
 
-                return forkJoin([
-                  of(alert.getId()),
-                  of(alertXml),
-                  this.capStorageService.idExists(alert.getId())
-                ]);
+                return forkJoin({
+                  alertId: of(alert.getId()),
+                  alertXml: of(alertXml),
+                  isFoundInStorage: this.capStorageService.idExists(alert.getId())
+                });
               }
-            ),
-            map(
-              ([alertId, alertXml, isFoundInStorage]) => ({
-                alertId,
-                alertXml,
-                isFoundInStorage
-              })
             ),
             filter(
               (params) => {
@@ -52,9 +45,16 @@ class FeedFetcherService {
             ),
             mergeMap(
               (alertId) => {
+                console.info(`FeedFetcherService: Saving Id ${alertId} in database`)
                 return this.capStorageService.addId(alertId).pipe(
                   map(() => alertId)
                 );
+              }
+            ),
+            catchError (
+              (error) => {
+                console.error('FeedFetcherService: Error occured while transfering message', error);
+                return of(null)
               }
             )
           );

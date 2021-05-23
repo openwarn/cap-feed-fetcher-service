@@ -23,18 +23,18 @@
   "dependencies": {
     "axios": "^0.21.1",
     "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "helmet": "^3.15.0",
-    "ioredis": "^4.6.2",
-    "morgan": "^1.9.1",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "ioredis": "^4.27.2",
+    "morgan": "^1.10.0",
     "nocache": "^2.1.0",
-    "rxjs": "^6.4.0",
+    "rxjs": "^7.1.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "eslint": "^5.12.1",
-    "jasmine": "^3.3.1",
+    "eslint": "^7.26.0",
+    "jasmine": "^3.7.0",
     "servemocks": "^1.0.4",
-    "supertest": "^3.4.2"
+    "supertest": "^6.1.3"
   }
 }
