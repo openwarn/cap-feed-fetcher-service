@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jasmine",
     "start": "node .",
-    "lint": "eslint src/**/*.js"
+    "servemocks:warning-distribution": "servemocks warning-distribution/mock-api -p 9101",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix"
   },
   "repository": {
     "type": "git",
@@ -16,23 +18,25 @@
     "Nodejs",
     "CAP"
   ],
-  "author": "",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/warnsystem/cap-feed-fetcher-service#readme",
+  "author": "Alexander Noack <eisverticker@posteo.de>",
+  "license": "MIT",
+  "homepage": "https://github.com/openwarn",
+  "bugs": "https://github.com/openwarn/cap-feed-fetcher-service/issues/",
   "dependencies": {
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "helmet": "^3.15.0",
-    "ioredis": "^4.6.2",
-    "morgan": "^1.9.1",
-    "request": "^2.88.0",
-    "request-promise-native": "^1.0.5",
-    "rxjs": "^6.4.0",
+    "express": "^4.17.1",
+    "helmet": "^4.6.0",
+    "ioredis": "^4.27.2",
+    "morgan": "^1.10.0",
+    "nocache": "^2.1.0",
+    "rxjs": "^7.1.0",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "eslint": "^5.12.1",
-    "jasmine": "^3.3.1",
-    "supertest": "^3.4.2"
+    "eslint": "^7.26.0",
+    "jasmine": "^3.7.0",
+    "servemocks": "^1.0.4",
+    "supertest": "^6.1.3"
   }
 }

@@ -1,9 +1,13 @@
-const from = require('rxjs').from;
-const map = require('rxjs/operators').map;
+const { from } = require('rxjs');
+const { map } = require('rxjs/operators');
 
 class CapDeliveryService {
-    constructor(request, targetUrl) {
-        this.request = request;
+    /**
+     * @param {AxiosInstance} axios 
+     * @param {string} targetUrl 
+     */
+    constructor(axios, targetUrl) {
+        this.axios = axios;
         this.targetUrl = targetUrl;
     }
 
@@ -12,14 +16,11 @@ class CapDeliveryService {
      * @param {string} capXml 
      */
     deliver(alertId, capXml) {
-        return from(this.request({
-            headers: {},
-            json: {
+        return from(
+            this.axios.post(this.targetUrl, {
                 xml: capXml
-            },
-            method: 'POST',
-            url: this.targetUrl
-        })).pipe(
+            })
+        ).pipe(
             map(
                 () => alertId
             )

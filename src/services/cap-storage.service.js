@@ -1,4 +1,4 @@
-const from = require('rxjs').from;
+const  { from } = require('rxjs');
 
 class CapStorageService {
     static get REDIS_ID_COLLECTION() {

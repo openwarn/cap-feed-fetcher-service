@@ -1,12 +1,6 @@
 const CapAlert = require('../cap-alert');
-const flatMap = require('rxjs/operators').flatMap;
-const map = require('rxjs/operators').map;
-const forkJoin = require('rxjs').forkJoin;
-const from = require('rxjs').from;
-const filter = require('rxjs/operators').filter;
-const CapStorageService = require('./cap-storage.service');
-const CapAtomFeedListenerService = require('./cap-atom-feed-listener.service');
-const CapDeliveryService = require('./cap-delivery.service');
+const { mergeMap, map, filter, catchError } = require('rxjs/operators');
+const { forkJoin, of } = require('rxjs');
 
 class FeedFetcherService {
     /**
@@ -29,32 +23,38 @@ class FeedFetcherService {
      */
     transferNewAlerts(feedUrl, pullInterval) {
         return this.capAtomFeedListenerService.feed(feedUrl, pullInterval).pipe(
-            flatMap(
+            mergeMap(
               (alertXml) => {
                 const alert = CapAlert.fromXml(alertXml);
                 console.info('FeedFetcherService', `Got alert with id ${alert.getId()}`);
 
-                return forkJoin(from([alert.getId()]), from([alertXml]), this.capStorageService.idExists(alert.getId()));
+                return forkJoin({
+                  alertId: of(alert.getId()),
+                  alertXml: of(alertXml),
+                  isFoundInStorage: this.capStorageService.idExists(alert.getId())
+                });
               }
             ),
-            map(
-              (params) => ({
-                alertId: params[0],
-                alertXml: params[1],
-                isFoundInStorage: params[2]
-              })
-            ),
             filter(
-              (params) => params.isFoundInStorage === false
+              (params) => {
+                return params.isFoundInStorage === false
+              }
             ),
-            flatMap(
+            mergeMap(
               (params) => this.capDeliveryService.deliver(params.alertId, params.alertXml)
             ),
-            flatMap(
+            mergeMap(
               (alertId) => {
+                console.info(`FeedFetcherService: Saving Id ${alertId} in database`)
                 return this.capStorageService.addId(alertId).pipe(
                   map(() => alertId)
                 );
+              }
+            ),
+            catchError (
+              (error) => {
+                console.error('FeedFetcherService: Error occured while transfering message', error);
+                return of(null)
               }
             )
           );

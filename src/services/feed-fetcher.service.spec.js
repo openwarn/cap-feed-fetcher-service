@@ -2,7 +2,7 @@ const FeedFetcherService = require('./feed-fetcher.service');
 const CapStorageService = require('./cap-storage.service');
 const CapAtomFeedListenerService = require('./cap-atom-feed-listener.service');
 const CapDeliveryService = require('./cap-delivery.service');
-const from = require('rxjs').from;
+const { from } = require('rxjs');
 
 describe('FeedFetcherService', () => {
     let capAtomFeedListenerService;

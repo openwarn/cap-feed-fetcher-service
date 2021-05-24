@@ -1,4 +1,4 @@
-FROM node:11
+FROM node:14
 WORKDIR /code
 
 ENV NODE_ENV=production
@@ -9,3 +9,4 @@ RUN npm install --only=production
 COPY . .
 
 CMD [ "npm", "start" ]
+
