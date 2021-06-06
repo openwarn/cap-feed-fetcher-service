@@ -1,7 +1,5 @@
-const express = require('express');
-const process = require('process');
-const app = require('./app');
-const request = require('supertest');
+const { init } = require('./app');
+const supertest = require('supertest');
 
 // Helper function to combine supertest with jasmine
 function jasminify(err, done) {
@@ -14,16 +12,14 @@ function jasminify(err, done) {
 
 describe('app', () => {
     const STATUS_CODE_OK = 200;
-    const TEST_PORT = 7001;
-    let expressApp = express();
+    let request;
 
     beforeAll(() => {
-        process.env.PORT = TEST_PORT;
-        expressApp = app.start();
+        request = supertest(init().app)
     });
 
     it('should provide health endpoint', (done) => {
-        request(expressApp).get('/health')
+        request.get('/health')
             .expect('Content-Type', 'application/json; charset=utf-8')
             .expect(STATUS_CODE_OK)
             .end((err) => jasminify(err, done));
