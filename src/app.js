@@ -1,6 +1,5 @@
 
 const express = require('express');
-const http = require('http');
 const ioredis = require('ioredis');
 const axios = require('axios').default;
 const requestLogger = require('morgan');
@@ -29,12 +28,11 @@ function resolveConfig(defaultConfig, env) {
   return configurationService.loadConfiguration();
 }
 
-function startApp() {
+function initApp () {
   const config = resolveConfig(defaults, process.env);
   const capDeliveryService = new CapDeliveryService(axios, config.WARNING_DISTRIBUTION_URL);
   const capFeedListenerService = new CapAtomFeedListenerService(axios, config);
   const app = express();
-  const server = http.Server(app);
 
   let redisClient = new ioredis({
     host: config.REDIS_HOST,
@@ -79,13 +77,17 @@ function startApp() {
   // Routes
   app.use('/health', healthRouterFactory());
 
-  server.listen(config.PORT, () => {
+  return { app, config };
+}
+
+function startApp() {
+  const { app, config } = initApp();
+  app.listen(config.PORT, () => {
     console.log('listening on *:' + config.PORT);
   });
-
-  return app;
 }
 
 module.exports = {
-  start: startApp
+  start: startApp,
+  init: initApp
 }
